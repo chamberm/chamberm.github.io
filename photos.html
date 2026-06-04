@@ -1,103 +1,465 @@
 <!DOCTYPE HTML>
-<!--
-	Spectral by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
 <html>
 	<head>
-		<title>Maxime Chamberland - PhD</title>
+		<title>Maxime Chamberland - Lab Photos</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+		<style>
+			/* ─── Gallery Layout ─────────────────────────────────── */
+			.gallery-section {
+				padding: 4rem 0 2rem;
+			}
+
+			.gallery-year {
+				margin-bottom: 3.5rem;
+			}
+
+			.gallery-year-header {
+				display: flex;
+				align-items: baseline;
+				gap: 1rem;
+				margin-bottom: 1.5rem;
+				border-bottom: 1px solid rgba(255,255,255,0.08);
+				padding-bottom: 0.75rem;
+			}
+
+			.gallery-year-header h3 {
+				font-family: 'DM Serif Display', serif;
+				font-size: 1.4rem;
+				font-weight: 400;
+				margin: 0;
+				letter-spacing: 0.01em;
+			}
+
+			.gallery-year-header .location-tag {
+				font-family: 'DM Sans', sans-serif;
+				font-size: 0.75rem;
+				font-weight: 500;
+				text-transform: uppercase;
+				letter-spacing: 0.12em;
+				opacity: 0.45;
+			}
+
+			/* ─── Photo Grid ─────────────────────────────────────── */
+			.photo-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+				gap: 0.75rem;
+			}
+
+			.photo-item {
+				position: relative;
+				overflow: hidden;
+				border-radius: 6px;
+				cursor: pointer;
+				aspect-ratio: 4/3;
+				background: rgba(255,255,255,0.04);
+			}
+
+			.photo-item img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				display: block;
+				transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+				            filter 0.3s ease;
+				filter: brightness(0.92);
+			}
+
+			.photo-item:hover img {
+				transform: scale(1.04);
+				filter: brightness(1);
+			}
+
+			.photo-item::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				background: linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 55%);
+				opacity: 0;
+				transition: opacity 0.3s ease;
+			}
+
+			.photo-item:hover::after {
+				opacity: 1;
+			}
+
+			.photo-zoom-icon {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%) scale(0.7);
+				opacity: 0;
+				transition: opacity 0.3s ease, transform 0.3s ease;
+				z-index: 2;
+				width: 44px;
+				height: 44px;
+				background: rgba(255,255,255,0.15);
+				border: 1px solid rgba(255,255,255,0.3);
+				border-radius: 50%;
+				backdrop-filter: blur(6px);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.photo-zoom-icon svg {
+				width: 18px;
+				height: 18px;
+				stroke: #fff;
+				fill: none;
+				stroke-width: 2;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+			}
+
+			.photo-item:hover .photo-zoom-icon {
+				opacity: 1;
+				transform: translate(-50%, -50%) scale(1);
+			}
+
+			/* ─── Lightbox ───────────────────────────────────────── */
+			#lightbox {
+				display: none;
+				position: fixed;
+				inset: 0;
+				z-index: 9999;
+				background: rgba(0, 0, 0, 0.92);
+				backdrop-filter: blur(12px);
+				align-items: center;
+				justify-content: center;
+				flex-direction: column;
+				padding: 2rem;
+				animation: fadeIn 0.2s ease;
+			}
+
+			#lightbox.active {
+				display: flex;
+			}
+
+			@keyframes fadeIn {
+				from { opacity: 0; }
+				to   { opacity: 1; }
+			}
+
+			#lightbox-img {
+				max-width: min(90vw, 1100px);
+				max-height: 80vh;
+				object-fit: contain;
+				border-radius: 4px;
+				box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+				animation: slideUp 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+			}
+
+			@keyframes slideUp {
+				from { transform: translateY(16px); opacity: 0; }
+				to   { transform: translateY(0);    opacity: 1; }
+			}
+
+			#lightbox-caption {
+				font-family: 'DM Sans', sans-serif;
+				font-size: 0.85rem;
+				font-weight: 300;
+				letter-spacing: 0.06em;
+				color: rgba(255,255,255,0.5);
+				margin-top: 1rem;
+				text-align: center;
+				text-transform: uppercase;
+			}
+
+			#lightbox-close {
+				position: fixed;
+				top: 1.5rem;
+				right: 1.5rem;
+				width: 40px;
+				height: 40px;
+				background: rgba(255,255,255,0.1);
+				border: 1px solid rgba(255,255,255,0.2);
+				border-radius: 50%;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: background 0.2s ease;
+			}
+
+			#lightbox-close:hover {
+				background: rgba(255,255,255,0.2);
+			}
+
+			#lightbox-close svg {
+				width: 16px;
+				height: 16px;
+				stroke: #fff;
+				fill: none;
+				stroke-width: 2;
+				stroke-linecap: round;
+			}
+
+			/* Prev / Next */
+			.lb-nav {
+				position: fixed;
+				top: 50%;
+				transform: translateY(-50%);
+				width: 44px;
+				height: 44px;
+				background: rgba(255,255,255,0.08);
+				border: 1px solid rgba(255,255,255,0.15);
+				border-radius: 50%;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: background 0.2s ease;
+				z-index: 2;
+			}
+
+			.lb-nav:hover { background: rgba(255,255,255,0.18); }
+
+			#lb-prev { left: 1.5rem; }
+			#lb-next { right: 1.5rem; }
+
+			.lb-nav svg {
+				width: 18px;
+				height: 18px;
+				stroke: #fff;
+				fill: none;
+				stroke-width: 2;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+			}
+
+			/* ─── Responsive tweaks ──────────────────────────────── */
+			@media (max-width: 600px) {
+				.photo-grid {
+					grid-template-columns: 1fr 1fr;
+					gap: 0.5rem;
+				}
+
+				.lb-nav { display: none; }
+			}
+		</style>
 	</head>
 	<body class="is-preload">
 
-		<!-- Page Wrapper -->
-			<div id="page-wrapper">
+		<div id="page-wrapper">
 
-				<!-- Header -->
-					<header id="header">
-						<h1><a href="index.html">Maxime Chamberland</a></h1>
-						<nav id="nav">
-							<ul>
-								<li class="special">
-									<a href="#menu" class="menuToggle"><span>Menu</span></a>
-									<div id="menu">
-										<ul>
-											<li><a href="index.html">Home</a></li>
-											<li><a href="teaching.html">Teaching</a></li>
-											<li><a href="https://scholar.google.com/citations?user=7wq30k4AAAAJ&hl=en">Publications</a></li>
-											<li><a href="photos.html">Lab photos</a></li>
-											<!--<li><a href="#">Log In</a></li>-->
-										</ul>
-									</div>
-								</li>
-							</ul>
-						</nav>
-					</header>
-
-				<!-- Main -->
-					<article id="main">
-						
-						<section class="wrapper style5">
-							<div class="inner">
-
-								<h3>Microstructure Symposium - Melbourne, Australia (2026)</h3>
-								<table>
-									<tr>
-										<td width="50%"><img src="images/melb1.JPG" alt="melb-2026" style="height:250px;"></a></td>
-										<td width="50%"><img src="images/melb2.JPG" alt="melb-2026" style="height:250px;"></a></td>
-										</tr>
-								</table>
-								<h3>ISMRM Diffusion Workshop - Kyoto, Japan (2025)</h3>
-								<table>
-									<tr>
-										<td width="50%"><img src="images/ismrm-workshop.jpg" alt="ismrm-workshop-2025" style="height:250px;"></a></td>
-										</tr>
-								</table>
-								<h3>MICCAI - Marrakesh, Morocco (2024)</h3>
-								<table>
-									<tr>
-										<td width="50%"><img src="images/IMG_9510.jpg" alt="MICCAI2024" style="height:250px;"></a></td>
-										</tr>
-								</table>
-								<h3>MICCAI - Vancouver, Canada (2023)</h3>
-								<table>
-									<tr>
-										<td width="50%"><img src="images/IMG_7002.jpg" alt="MICCAI2023" style="height:250px;"></a></td>
-										</tr>
-								</table>
+			<!-- Header -->
+			<header id="header">
+				<h1><a href="index.html">Maxime Chamberland</a></h1>
+				<nav id="nav">
+					<ul>
+						<li class="special">
+							<a href="#menu" class="menuToggle"><span>Menu</span></a>
+							<div id="menu">
+								<ul>
+									<li><a href="index.html">Home</a></li>
+									<li><a href="teaching.html">Teaching</a></li>
+									<li><a href="https://scholar.google.com/citations?user=7wq30k4AAAAJ&hl=en">Publications</a></li>
+									<li><a href="photos.html">Lab photos</a></li>
+								</ul>
 							</div>
-						</section>
-					</article>
-
-				<!-- Footer -->
-				<footer id="footer">
-					<ul class="icons">
-						<li><a href="https://twitter.com/MaxChamb" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-						<li><a href="https://github.com/chamberm" class="icon brands fa-github"><span class="label">Github</span></a></li>
-						<li><a href="https://scholar.google.com/citations?user=7wq30k4AAAAJ&hl=en" class="icon brands fa-google"><span class="label">Google Scholar</span></a></li>
-						<li><a href="https://www.researchgate.net/profile/Maxime-Chamberland" class="icon brands fa-researchgate"><span class="label">Research Gate</span></a></li>
-						<li><a href="https://www.linkedin.com/in/chamberm/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
-						<li><a href="m.chamberland@tue.nl" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+						</li>
 					</ul>
-					<ul class="copyright">
-						<li>&copy; Maxime Chamberland</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-					</ul>
-				</footer>
+				</nav>
+			</header>
 
-			</div>
+			<!-- Main -->
+			<article id="main">
+				<section class="wrapper style5">
+					<div class="inner gallery-section">
+
+						<!-- 2026 -->
+						<div class="gallery-year">
+							<div class="gallery-year-header">
+								<h3>Microstructure Symposium</h3>
+								<span class="location-tag">Melbourne, Australia · 2026</span>
+							</div>
+							<div class="photo-grid">
+								<div class="photo-item" data-src="images/melb1.JPG" data-caption="Microstructure Symposium">
+									<img src="images/melb1.JPG" alt="Microstructure Symposium" loading="lazy">
+									<div class="photo-zoom-icon">
+										<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+									</div>
+								</div>
+							</div>
+							<div class="photo-grid">
+								<div class="photo-item" data-src="images/melb2.JPG" data-caption="Microstructure Symposium">
+									<img src="images/melb2.JPG" alt="Microstructure Symposium" loading="lazy">
+									<div class="photo-zoom-icon">
+										<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- 2025 -->
+						<div class="gallery-year">
+							<div class="gallery-year-header">
+								<h3>ISMRM Diffusion Workshop</h3>
+								<span class="location-tag">Kyoto, Japan · 2025</span>
+							</div>
+							<div class="photo-grid">
+								<div class="photo-item" data-src="images/ismrm-workshop.jpg" data-caption="ISMRM Diffusion Workshop — Kyoto, Japan (2025)">
+									<img src="images/ismrm-workshop.jpg" alt="ISMRM Diffusion Workshop 2025" loading="lazy">
+									<div class="photo-zoom-icon">
+										<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- 2024 -->
+						<div class="gallery-year">
+							<div class="gallery-year-header">
+								<h3>MICCAI</h3>
+								<span class="location-tag">Marrakesh, Morocco · 2024</span>
+							</div>
+							<div class="photo-grid">
+								<div class="photo-item" data-src="images/IMG_9510.jpg" data-caption="MICCAI — Marrakesh, Morocco (2024)">
+									<img src="images/IMG_9510.jpg" alt="MICCAI 2024" loading="lazy">
+									<div class="photo-zoom-icon">
+										<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- 2023 -->
+						<div class="gallery-year">
+							<div class="gallery-year-header">
+								<h3>MICCAI</h3>
+								<span class="location-tag">Vancouver, Canada · 2023</span>
+							</div>
+							<div class="photo-grid">
+								<div class="photo-item" data-src="images/IMG_7002.jpg" data-caption="MICCAI — Vancouver, Canada (2023)">
+									<img src="images/IMG_7002.jpg" alt="MICCAI 2023" loading="lazy">
+									<div class="photo-zoom-icon">
+										<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</section>
+			</article>
+
+			<!-- Footer -->
+			<footer id="footer">
+				<ul class="icons">
+					<li><a href="https://twitter.com/MaxChamb" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+					<li><a href="https://github.com/chamberm" class="icon brands fa-github"><span class="label">Github</span></a></li>
+					<li><a href="https://scholar.google.com/citations?user=7wq30k4AAAAJ&hl=en" class="icon brands fa-google"><span class="label">Google Scholar</span></a></li>
+					<li><a href="https://www.researchgate.net/profile/Maxime-Chamberland" class="icon brands fa-researchgate"><span class="label">Research Gate</span></a></li>
+					<li><a href="https://www.linkedin.com/in/chamberm/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+					<li><a href="m.chamberland@tue.nl" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+				</ul>
+				<ul class="copyright">
+					<li>&copy; Maxime Chamberland</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+				</ul>
+			</footer>
+
+		</div>
+
+		<!-- Lightbox -->
+		<div id="lightbox">
+			<button id="lightbox-close" aria-label="Close">
+				<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+			</button>
+			<button class="lb-nav" id="lb-prev" aria-label="Previous">
+				<svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+			</button>
+			<img id="lightbox-img" src="" alt="">
+			<div id="lightbox-caption"></div>
+			<button class="lb-nav" id="lb-next" aria-label="Next">
+				<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+			</button>
+		</div>
 
 		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/jquery.scrollex.min.js"></script>
+		<script src="assets/js/jquery.scrolly.min.js"></script>
+		<script src="assets/js/browser.min.js"></script>
+		<script src="assets/js/breakpoints.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/main.js"></script>
+
+		<script>
+			// ─── Lightbox logic ───────────────────────────────────────────
+			const lightbox    = document.getElementById('lightbox');
+			const lbImg       = document.getElementById('lightbox-img');
+			const lbCaption   = document.getElementById('lightbox-caption');
+			const lbClose     = document.getElementById('lightbox-close');
+			const lbPrev      = document.getElementById('lb-prev');
+			const lbNext      = document.getElementById('lb-next');
+
+			let items = [];   // all .photo-item elements (flat)
+			let current = 0;
+
+			function buildIndex() {
+				items = Array.from(document.querySelectorAll('.photo-item'));
+			}
+
+			function openLightbox(index) {
+				current = index;
+				const item = items[current];
+				lbImg.src = item.dataset.src;
+				lbCaption.textContent = item.dataset.caption || '';
+				lightbox.classList.add('active');
+				document.body.style.overflow = 'hidden';
+			}
+
+			function closeLightbox() {
+				lightbox.classList.remove('active');
+				document.body.style.overflow = '';
+				lbImg.src = '';
+			}
+
+			function navigate(dir) {
+				current = (current + dir + items.length) % items.length;
+				lbImg.style.animation = 'none';
+				lbImg.offsetHeight; // reflow
+				lbImg.style.animation = '';
+				const item = items[current];
+				lbImg.src = item.dataset.src;
+				lbCaption.textContent = item.dataset.caption || '';
+			}
+
+			buildIndex();
+
+			document.querySelectorAll('.photo-item').forEach((el, i) => {
+				el.addEventListener('click', () => openLightbox(i));
+			});
+
+			lbClose.addEventListener('click', closeLightbox);
+			lbPrev.addEventListener('click', () => navigate(-1));
+			lbNext.addEventListener('click', () => navigate(1));
+
+			lightbox.addEventListener('click', (e) => {
+				if (e.target === lightbox) closeLightbox();
+			});
+
+			document.addEventListener('keydown', (e) => {
+				if (!lightbox.classList.contains('active')) return;
+				if (e.key === 'Escape')      closeLightbox();
+				if (e.key === 'ArrowLeft')   navigate(-1);
+				if (e.key === 'ArrowRight')  navigate(1);
+			});
+
+			// ─── Touch/swipe support ──────────────────────────────────────
+			let touchStartX = 0;
+			lightbox.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
+			lightbox.addEventListener('touchend',   e => {
+				const dx = e.changedTouches[0].clientX - touchStartX;
+				if (Math.abs(dx) > 50) navigate(dx < 0 ? 1 : -1);
+			}, { passive: true });
+		</script>
 
 	</body>
 </html>
